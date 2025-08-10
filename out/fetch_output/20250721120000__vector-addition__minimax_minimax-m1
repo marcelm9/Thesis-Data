@@ -1,0 +1,232 @@
+(c[i] - res[i]);
+    if (val > TOL)
+      err++;
+  }
+
+  // print results
+  printf("[%d, %f]\n", err, runtime);
+
+  free(a);
+  free(b);
+  free(c);
+  free(res);
+
+  return 0;
+}
+
+So, the main loop to parallelize is the one where c[i] = a[i] + b[i]. That's the loop inside the timing section.
+
+So, adding the pragma there.
+
+But in C, the for loop variables need to be declared in the loop. The loop is:
+
+for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+}
+
+So, the pragma would be placed before this loop.
+
+Also, need to include omp.h.
+
+So, the modified code would have:
+
+#include <omp.h>
+
+And the COMPILERFLAGS is changed to "-lm -fopenmp".
+
+Wait, the original COMPILERFLAGS is "-lm". So the user wants to define the compiler flags in the code. So in the code, the first line is #define COMPILERFLAGS "-lm". So we need to change that to #define COMPILERFLAGS "-lm -fopenmp".
+
+But wait, the user's instruction says: "Define compiler flags by defining them in the top of the C code as COMPILERFLAGS, for example #define COMPILERFLAGS "flag1 flag2 flag3""
+
+So in the original code, the line is #define COMPILERFLAGS "-lm". So the user wants us to modify that line to include the OpenMP flag.
+
+So, the modified line would be #define COMPILERFLAGS "-lm -fopenmp".
+
+But wait, the order of flags might matter. But for GCC, -lm is for math library, and -fopenmp enables OpenMP. So combining them is okay.
+
+Now, the code would have:
+
+#define COMPILERFLAGS "-lm -fopenmp"
+
+Then, include omp.h.
+
+Then, add the pragma to the loop.
+
+But in the code, the loop is:
+
+// add two vectors
+for (int i = 0; i < vector_size; i++) {
+  c[i] = a[i] + b[i];
+}
+
+So adding #pragma omp parallel for before that loop.
+
+Wait, but in C, the pragma needs to be placed before the loop. So:
+
+#pragma omp parallel for
+for (int i = 0; i < vector_size; i++) {
+  c[i] = a[i] + b[i];
+}
+
+That's the main change.
+
+So putting it all together.
+
+Wait, but the code uses the C89 style where variables are declared at the top of the block. The loop variable i is declared in the for loop, which is allowed in C99 and later. But the original code uses C89? Because in C89, variables must be declared at the start of the block. However, in the code, the loop variable i is declared in the for loop, which is allowed in C99. But the code may be compiled with a C89-compliant compiler. But the user says to use GCC, which supports C99.
+
+But regardless, the code as given is valid in C99. So the pragma can be added.
+
+So the steps are:
+
+1. Add #include <omp.h> at the top.
+
+2. Change COMPILERFLAGS to "-lm -fopenmp".
+
+3. Add #pragma omp parallel for before the loop that adds the vectors.
+
+Wait, but in the code, after filling the arrays, there's a timing section. The loop to add the vectors is inside the timing.
+
+So the code:
+
+// start measuring
+struct timespec start, end;
+clock_gettime(CLOCK_MONOTONIC, &start);
+
+// add two vectors
+for (int i = 0; i < vector_size; i++) {
+  c[i] = a[i] + b[i];
+}
+
+// end measuring
+clock_gettime(CLOCK_MONOTONIC, &end);
+
+So the loop is between start and end. Adding the pragma there.
+
+So the modified code would have:
+
+// add two vectors
+#pragma omp parallel for
+for (int i = 0; i < vector_size; i++) {
+  c[i] = a[i] + b[i];
+}
+
+That's the main change.
+
+Now, check if there are any other parts that need to be adjusted. For example, the arrays a, b, c are allocated with malloc. Since each thread will access different elements, there's no race condition here. So the parallelization is safe.
+
+Another thing: the code uses the variable 'err' which is initialized to 0 and then incremented in the test loop. But that loop is not parallelized. So no problem there.
+
+So the main changes are adding the include, modifying the compiler flags, and adding the pragma.
+
+Wait, but the original code uses 'abs' in the test loop. The function abs() for doubles is fabs(), but in the code, it's written as abs(c[i] - res[i]). Wait, in C, abs() is for integers. For doubles, you need to use fabs(). But the code uses abs(), which might be a mistake. However, the original code compiles with the given flags. So perhaps the code uses a different include, or maybe it's a typo. But since the user provided the code as is, we don't need to fix that. Our task is to parallelize the code as given.
+
+So the only changes needed are the three steps: include omp.h, modify compiler flags, add pragma.
+
+So the final code would look like:
+
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+// ... rest of the code ...
+
+Then, in the loop:
+
+// add two vectors
+#pragma omp parallel for
+for (int i = 0; i < vector_size; i++) {
+  c[i] = a[i] + b[i];
+}
+
+That's it.
+
+Wait, but the original code uses the variable 'err' which is declared as int err = 0; and then in the test loop, it's incremented. Since that loop is not parallelized, there's no problem.
+
+So the code should compile with the new flags and the OpenMP pragma.
+
+So the answer is to modify the code as```c
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+#define TOL 0.0000001
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // set seed for random number generation
+  srand((unsigned int)strtol(argv[2], NULL, 10));
+
+  // generate a random number
+  int random_number_1 = rand() % 1000;
+  int random_number_2 = rand() % 1000;
+
+  char *endptr;
+  long vector_size = strtol(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  // create arrays
+  double *a = malloc(vector_size * sizeof(double));
+  double *b = malloc(vector_size * sizeof(double));
+  double *c = malloc(vector_size * sizeof(double));
+  double *res = malloc(vector_size * sizeof(double));
+  int err = 0;
+
+  if (!a || !b || !c || !res) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the arrays
+  for (int i = 0; i < vector_size; i++) {
+    a[i] = (double)i * random_number_1;
+    b[i] = (double)i * random_number_2;
+    c[i] = 0.0;
+    res[i] = a[i] + b[i];
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // add two vectors
+  #pragma omp parallel for
+  for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  for (int i = 0; i < vector_size; i++) {
+    double val = abs(c[i] - res[i]);
+    if (val > TOL)
+      err++;
+  }
+
+  // print results
+  printf("[%d, %f]\n", err, runtime);
+
+  free(a);
+  free(b);
+  free(c);
+  free(res);
+
+  return 0;
+}
+```

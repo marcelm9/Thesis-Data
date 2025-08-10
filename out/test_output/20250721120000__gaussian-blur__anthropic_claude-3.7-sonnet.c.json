@@ -1,0 +1,36 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra32",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773386752
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721120000__gaussian-blur__anthropic_claude-3.7-sonnet.c",
+    "date": "20250721120000",
+    "taskname": "gaussian-blur",
+    "llm": "anthropic_claude-3.7-sonnet",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721120000__gaussian-blur__anthropic_claude-3.7-sonnet.c: In function \u2018main\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721120000__gaussian-blur__anthropic_claude-3.7-sonnet.c:54:48: error: \u2018i\u2019 undeclared (first use in this function)\n   54 |   #pragma omp parallel for collapse(2) private(i, j)\n      |                                                ^\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721120000__gaussian-blur__anthropic_claude-3.7-sonnet.c:54:48: note: each undeclared identifier is reported only once for each function it appears in\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721120000__gaussian-blur__anthropic_claude-3.7-sonnet.c:54:51: error: \u2018j\u2019 undeclared (first use in this function)\n   54 |   #pragma omp parallel for collapse(2) private(i, j)\n      |                                                   ^\n"
+    ],
+    "flags": [
+        "-lm",
+        "-fopenmp"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "50 2025",
+        "500 2025",
+        "1000 2025",
+        "5000 2025",
+        "10000 2025",
+        "20000 2025"
+    ],
+    "runs": {}
+}

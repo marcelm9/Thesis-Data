@@ -1,0 +1,33 @@
+{
+    "request_success": true,
+    "request_seconds": 8.58566665649414,
+    "request_error": null,
+    "openrouter": {
+        "id": "gen-1752714014-UTGl1cgTfaup9213hM6D",
+        "provider": "Google",
+        "model": "google/gemini-2.5-flash",
+        "object": "chat.completion",
+        "created": 1752714014,
+        "choices": [
+            {
+                "logprobs": null,
+                "finish_reason": "stop",
+                "native_finish_reason": "STOP",
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "[AutoMP_fetch] See corresponding output file",
+                    "refusal": null,
+                    "reasoning": null
+                }
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 1306,
+            "completion_tokens": 1291,
+            "total_tokens": 2597
+        }
+    },
+    "parsing_success": true,
+    "parsing_error": null
+}

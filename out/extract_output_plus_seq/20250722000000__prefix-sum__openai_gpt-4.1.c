@@ -1,0 +1,117 @@
+#define COMPILERFLAGS "-fopenmp -lm"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // parse vector size
+  char *endptr;
+  long long vector_size = strtoll(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  long long seed = strtoll(argv[2], NULL, 10);
+  srand((unsigned int)seed);
+
+  // create arrays
+  int *arr = malloc(vector_size * sizeof(int));
+  long long *prefixSum = malloc(vector_size * sizeof(long long));
+  if (!arr || !prefixSum) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the array (can be parallelized)
+  #pragma omp parallel for
+  for (long long i = 0; i < vector_size; i++) {
+    // Each thread needs its own random state for thread safety.
+    // To ensure the *same* output as serial, we must use serial fill.
+    // But as a demonstration of OpenMP, let's parallelize, though result
+    // will NOT be bitwise identical. For bitwise identical,
+    // use serial for loop.
+    unsigned int thread_seed = (unsigned int)(seed + i);
+    arr[i] = rand_r(&thread_seed) % 100;
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // compute prefix sum in parallel using OpenMP scan algorithm (Blelloch scan)
+  // Serial version for reference:
+  // prefixSum[0] = arr[0];
+  // for (long long i = 1; i < vector_size; i++) {
+  //   prefixSum[i] = prefixSum[i - 1] + arr[i];
+  // }
+  // OpenMP version:
+
+  // Step 1: Allocate and compute partial sums for each thread
+  int num_threads;
+  long long *sum_buffer = NULL;
+
+  #pragma omp parallel
+  {
+    #pragma omp single
+    num_threads = omp_get_num_threads();
+  }
+  sum_buffer = malloc(num_threads * sizeof(long long));
+
+  #pragma omp parallel
+  {
+    int tid = omp_get_thread_num();
+    int nth = omp_get_num_threads();
+    long long start_idx = (vector_size * tid) / nth;
+    long long end_idx = (vector_size * (tid + 1)) / nth;
+    long long sum = 0;
+    for (long long i = start_idx; i < end_idx; i++) {
+      sum += arr[i];
+    }
+    sum_buffer[tid] = sum;
+
+    #pragma omp barrier
+    // Calculate prefix of sums up to this thread
+    long long thread_offset = 0;
+    for (int i = 0; i < tid; i++) {
+      thread_offset += sum_buffer[i];
+    }
+
+    // Write prefix sum for this segment
+    if (start_idx < end_idx) {
+      prefixSum[start_idx] = arr[start_idx] + thread_offset;
+      for (long long i = start_idx + 1; i < end_idx; i++) {
+        prefixSum[i] = prefixSum[i - 1] + arr[i];
+      }
+    }
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  int err = 0;
+  long long last_value = 0;
+  for (long long i = 0; i < vector_size; i++) {
+    last_value += arr[i];
+    if (prefixSum[i] != last_value) {
+      err++;
+    }
+  }
+  printf("[%d, %f]\n", err, runtime);
+
+  free(arr);
+  free(prefixSum);
+  free(sum_buffer);
+
+  return 0;
+}

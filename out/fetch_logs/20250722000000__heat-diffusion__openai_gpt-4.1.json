@@ -1,0 +1,33 @@
+{
+    "request_success": true,
+    "request_seconds": 10.151301622390747,
+    "request_error": null,
+    "openrouter": {
+        "id": "gen-1753146357-m7xZRAktm6ZLfKtsQPDJ",
+        "provider": "OpenAI",
+        "model": "openai/gpt-4.1",
+        "object": "chat.completion",
+        "created": 1753146357,
+        "choices": [
+            {
+                "logprobs": null,
+                "finish_reason": "stop",
+                "native_finish_reason": "stop",
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "[AutoMP_fetch] See corresponding output file",
+                    "refusal": null,
+                    "reasoning": null
+                }
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 1111,
+            "completion_tokens": 1068,
+            "total_tokens": 2179
+        }
+    },
+    "parsing_success": true,
+    "parsing_error": null
+}

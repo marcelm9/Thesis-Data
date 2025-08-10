@@ -1,0 +1,182 @@
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // parse vector size
+  char *endptr;
+  long long vector_size = strtoll(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  long long seed = strtoll(argv[2], NULL, 10);
+  srand((unsigned int)seed);
+
+  // create arrays
+  int *arr = malloc(vector_size * sizeof(int));
+  long long *prefixSum = malloc(vector_size * sizeof(long long));
+  if (!arr || !prefixSum) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the array
+  for (long long i = 0; i < vector_size; i++) {
+    arr[i] = rand() % 100; // random values in [0, 99]
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // compute prefix sum using OpenMP
+  // Using a parallel prefix sum algorithm (e.g., Blelloch's scan) or
+  // a simple parallelization based on chunks.
+  // For simplicity and correctness with the given serial structure,
+  // we'll use a sequential pass to calculate the prefix sum.
+  // A truly parallel prefix sum is more complex and often involves
+  // two passes: one for partial sums and one for combining them.
+  // Given the constraint of parallelizing the existing loop,
+  // we must be careful. The nature of prefix sum is inherently sequential
+  // (each element depends on the previous).
+  // A common approach for parallel prefix sum involves a two-pass algorithm
+  // or a work-efficient algorithm.
+  // However, OpenMP 4.0 introduced `omp scan` which is not widely supported
+  // across all compilers or versions.
+  // For older OpenMP versions or general parallelization, we can
+  // parallelize the initialization and then have a sequential reduction.
+  // Or, a more robust parallelization involves dividing the array into chunks,
+  // computing prefix sums within chunks, and then adding the last value of
+  // the previous chunk to all elements of the current chunk.
+
+  // Let's implement a common parallel scan approach, often called "hillis-steele" or "blelloch" variants.
+  // Here, we'll aim for a simple parallelization by parallelizing the initial array fill,
+  // but the prefix sum itself is hard to parallelize in-place without a proper scan algorithm.
+  // Let's look at a "work-efficient" parallel prefix sum.
+
+  // A simple parallel prefix sum (non-work efficient, but illustrates parallelism)
+  // This approach is typically O(N log N) work for a parallel scan,
+  // but can be implemented with O(N) using clever aggregation.
+
+  // Let's stick to a simpler, more common parallel prefix sum approach often seen with OpenMP:
+  // 1. Compute local prefix sums for chunks.
+  // 2. Compute prefix sums of the last elements of each chunk.
+  // 3. Add chunk prefix sums to the local prefix sums.
+
+  // This is a common parallel prefix sum algorithm (parallel scan)
+  if (vector_size > 0) {
+    prefixSum[0] = arr[0];
+    if (vector_size > 1) {
+      // First, a "down-sweep" phase or "up-sweep" followed by "down-sweep"
+      // For simplicity in OpenMP, consider a block-wise approach.
+      // A truly parallel prefix sum is not just parallelizing the loop as is,
+      // as it has a data dependency.
+
+      // A common simple parallel scan:
+      // Parallelize the initial computation of local sums
+      // This is still a challenge for true work-efficiency.
+
+      // For this problem, if directly parallelizing the provided loop is the goal,
+      // it's not straightforward due to the data dependency (prefixSum[i-1]).
+      // The most "parallel" part *without* changing the core algorithm structure
+      // for prefix sum would be to parallelize the initial array fill.
+      // However, the request is to parallelize "compute prefix sum".
+
+      // Let's try a simple parallel scan implementation:
+      // Based on Blelloch's algorithm or similar.
+
+      // Step 1: Compute partial sums in parallel within blocks
+      // Instead of the complex scan, if the aim is to get *some* parallelism
+      // into the prefix sum operation, we can use a parallel for on a simplified structure
+      // or directly use a sequential method for clarity given the original code structure.
+      // But we need to parallelize the "compute prefix sum" part.
+
+      // A truly useful parallel prefix sum usually involves two passes.
+      // 1. Up-sweep (reduction): Each thread computes a partial prefix sum
+      // for its slice. Intermediate sums are stored.
+      // 2. Down-sweep (scan): The intermediate sums are propagated
+      // to all elements to get the final inclusive prefix sum.
+
+      // Let's go for a simpler approach that uses parallelfor but ensures correctness.
+      // This often requires temporary arrays or a more complex algorithm.
+
+      // Simplest (and often fastest for small N, or if bandwidth limited): sequential
+      // For effective parallelization of prefix sum, dedicated algorithms are needed.
+      // One common way to "parallelize" the existing loop structure slightly
+      // is by chunking, but still requiring sequential processing within chunks
+      // and then combining. This is effectively what a parallel scan algorithm does.
+
+      // Let's implement a straightforward parallel prefix sum using OpenMP where possible.
+      // The `omp scan` pragma for OpenMP 5.0 is ideal, but assuming older standard.
+
+      // Manual implementation of a parallel scan similar to Blelloch's
+      // This uses a temporary array.
+      long long *temp_sums = malloc(vector_size * sizeof(long long));
+      if (!temp_sums) {
+        printf("Memory allocation failed for temp_sums\n");
+        return 1;
+      }
+
+      // Step 1: Up-sweep (Reduction) - Compute sums of sub-arrays
+      // This part is parallel.
+      #pragma omp parallel for
+      for (long long i = 0; i < vector_size; ++i) {
+        temp_sums[i] = arr[i];
+      }
+
+      int num_threads;
+      #pragma omp parallel
+      {
+        num_threads = omp_get_num_threads();
+      }
+
+      // Compute log-steps for the reduction
+      for (int d = 1; d < vector_size; d *= 2) {
+        #pragma omp parallel for
+        for (long long i = d; i < vector_size; ++i) {
+          temp_sums[i] += temp_sums[i - d];
+        }
+      }
+
+      // After the above loop, `temp_sums` contains the inclusive prefix sums.
+      // Copy to prefixSum array.
+      #pragma omp parallel for
+      for (long long i = 0; i < vector_size; ++i) {
+        prefixSum[i] = temp_sums[i];
+      }
+
+      free(temp_sums);
+    }
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  int err = 0;
+  long long last_value = 0;
+  for (long long i = 0; i < vector_size; i++) {
+    last_value += arr[i];
+    if (prefixSum[i] != last_value) {
+      err++;
+    }
+  }
+  printf("[%d, %f]\n", err, runtime);
+
+  free(arr);
+  free(prefixSum);
+
+  return 0;
+}

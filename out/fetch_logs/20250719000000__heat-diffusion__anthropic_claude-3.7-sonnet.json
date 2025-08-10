@@ -1,0 +1,33 @@
+{
+    "request_success": true,
+    "request_seconds": 14.744251012802124,
+    "request_error": null,
+    "openrouter": {
+        "id": "gen-1752886681-OrobxiNGp71B6y358Z6i",
+        "provider": "Google",
+        "model": "anthropic/claude-3.7-sonnet",
+        "object": "chat.completion",
+        "created": 1752886681,
+        "choices": [
+            {
+                "logprobs": null,
+                "finish_reason": "stop",
+                "native_finish_reason": "stop",
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "[AutoMP_fetch] See corresponding output file",
+                    "refusal": null,
+                    "reasoning": null
+                }
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 1336,
+            "completion_tokens": 1353,
+            "total_tokens": 2689
+        }
+    },
+    "parsing_success": true,
+    "parsing_error": null
+}

@@ -1,0 +1,34 @@
+models:
+  - "google/gemini-2.5-flash"
+  - "openai/gpt-4.1"
+  - "anthropic/claude-3.7-sonnet"
+  - "deepseek/deepseek-r1-0528"
+  - "x-ai/grok-3"
+  - "qwen/qwen3-235b-a22b"
+  - "minimax/minimax-m1"
+  - "mistralai/magistral-medium-2506"
+input:
+  vector-addition:
+    prompt: Parallelize the following program using OpenMP. 
+    file: ../programs/vector-addition.c
+  prefix-sum:
+    prompt: Parallelize the following program using OpenMP.
+    file: ../programs/prefix-sum.c
+  matrix-multiplication:
+    prompt: Parallelize the following program using OpenMP.
+    file: ../programs/matrix-multiplication.c
+  heat-diffusion:
+    prompt: Parallelize the following program using OpenMP.
+    file: ../programs/heat-diffusion.c
+  gaussian-blur:
+    prompt: Parallelize the following program using OpenMP.
+    file: ../programs/gaussian-blur.c
+input-directive: OUTPUT EXACTLY ONE CODE BLOCK (surrounded by three backticks (`)). Do not indent the whole code block. Your compiler is GCC. Define compiler flags by defining them in the top of the C code as COMPILERFLAGS, for example `#define COMPILERFLAGS "flag1 flag2 flag3"`
+log-directory: ../../out/fetch_logs
+output-directory: ../../out/fetch_output
+openrouter-api-key: <api-key-here>
+threading: false
+debug: true
+repeat: "0 */12 * * *"
+repeat-count: 28
+notify-on-success: true

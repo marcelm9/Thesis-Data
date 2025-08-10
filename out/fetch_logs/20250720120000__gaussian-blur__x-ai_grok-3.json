@@ -1,0 +1,40 @@
+{
+    "request_success": true,
+    "request_seconds": 9.409399509429932,
+    "request_error": null,
+    "openrouter": {
+        "id": "gen-1753016629-eKTbK7MPsyx5pRR8Z4xG",
+        "provider": "xAI",
+        "model": "x-ai/grok-3",
+        "object": "chat.completion",
+        "created": 1753016629,
+        "choices": [
+            {
+                "logprobs": null,
+                "finish_reason": "stop",
+                "native_finish_reason": "stop",
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "[AutoMP_fetch] See corresponding output file",
+                    "refusal": null,
+                    "reasoning": null
+                }
+            }
+        ],
+        "system_fingerprint": "fp_0d42a4eb3d",
+        "usage": {
+            "prompt_tokens": 987,
+            "completion_tokens": 966,
+            "total_tokens": 1953,
+            "prompt_tokens_details": {
+                "cached_tokens": 2
+            },
+            "completion_tokens_details": {
+                "reasoning_tokens": 0
+            }
+        }
+    },
+    "parsing_success": true,
+    "parsing_error": null
+}

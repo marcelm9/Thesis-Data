@@ -1,0 +1,43 @@
+{
+    "request_success": true,
+    "request_seconds": 13.122721195220947,
+    "request_error": null,
+    "openrouter": {
+        "id": "gen-1752607725-9yyVhtELnbRAEFtPXyhs",
+        "provider": "Minimax",
+        "model": "minimax/minimax-m1",
+        "object": "chat.completion",
+        "created": 1752607725,
+        "choices": [
+            {
+                "logprobs": null,
+                "finish_reason": "stop",
+                "native_finish_reason": "stop",
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "[AutoMP_fetch] See corresponding output file",
+                    "refusal": null,
+                    "reasoning": "Okay, the user just asked me to return the word 'TEST'. That's straightforward. Let me check if there's any hidden requirement or if they need something more. The query is simple, so I should just respond with 'TEST' as instructed. No need for extra steps here. Make sure the answer is exactly what they asked for. Yep, that's it. Just 'TEST'.",
+                    "reasoning_details": [
+                        {
+                            "type": "reasoning.text",
+                            "text": "Okay, the user just asked me to return the word 'TEST'. That's straightforward. Let me check if there's any hidden requirement or if they need something more. The query is simple, so I should just respond with 'TEST' as instructed. No need for extra steps here. Make sure the answer is exactly what they asked for. Yep, that's it. Just 'TEST'.",
+                            "provider": "minimax"
+                        }
+                    ]
+                }
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 467,
+            "completion_tokens": 83,
+            "total_tokens": 550,
+            "completion_tokens_details": {
+                "reasoning_tokens": 81
+            }
+        }
+    },
+    "parsing_success": true,
+    "parsing_error": null
+}

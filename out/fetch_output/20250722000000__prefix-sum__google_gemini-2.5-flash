@@ -1,0 +1,112 @@
+```c
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // parse vector size
+  char *endptr;
+  long long vector_size = strtoll(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  long long seed = strtoll(argv[2], NULL, 10);
+  srand((unsigned int)seed);
+
+  // create arrays
+  int *arr = malloc(vector_size * sizeof(int));
+  long long *prefixSum = malloc(vector_size * sizeof(long long));
+  if (!arr || !prefixSum) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the array
+  for (long long i = 0; i < vector_size; i++) {
+    arr[i] = rand() % 100; // random values in [0, 99]
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // compute prefix sum (parallelized with OpenMP scan/prefix sum algorithm)
+  // This is a common parallel prefix sum algorithm (e.g., Blelloch's algorithm or a variant)
+  // Simple parallelization of sequential prefix sum is not straightforward due to data dependencies.
+  // We'll use a two-pass approach.
+
+  // Pass 1: Compute partial sums within each thread's chunk
+#pragma omp parallel
+  {
+    int num_threads = omp_get_num_threads();
+    int thread_id = omp_get_thread_num();
+
+    long long chunk_size = (vector_size + num_threads - 1) / num_threads;
+    long long start_idx = thread_id * chunk_size;
+    long long end_idx = (thread_id + 1) * chunk_size;
+    if (end_idx > vector_size) {
+      end_idx = vector_size;
+    }
+
+    if (start_idx < end_idx) {
+      prefixSum[start_idx] = arr[start_idx];
+      for (long long i = start_idx + 1; i < end_idx; i++) {
+        prefixSum[i] = prefixSum[i - 1] + arr[i];
+      }
+    }
+  }
+
+  // Pass 2: Accumulate sums from previous chunks
+  // This requires a sequential pass or another parallel reduction step
+  // Using a sequential accumulation for simplicity in this example
+  // A more advanced parallel prefix sum would use a tree-like structure
+  // or a slightly different two-pass approach. For large vector sizes, this
+  // sequential part can be a bottleneck.
+  if (vector_size > 0) {
+    for (int i = 1; i < omp_get_num_threads(); ++i) {
+      long long prev_chunk_end_idx = i * ((vector_size + omp_get_num_threads() - 1) / omp_get_num_threads()) - 1;
+      long long current_chunk_start_idx = i * ((vector_size + omp_get_num_threads() - 1) / omp_get_num_threads());
+
+      if (prev_chunk_end_idx >= 0 && current_chunk_start_idx < vector_size) {
+        long long offset = prefixSum[prev_chunk_end_idx];
+#pragma omp parallel for
+        for (long long j = current_chunk_start_idx; j < (i + 1) * ((vector_size + omp_get_num_threads() - 1) / omp_get_num_threads()) && j < vector_size; ++j) {
+          prefixSum[j] += offset;
+        }
+      }
+    }
+  }
+
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  int err = 0;
+  long long last_value = 0;
+  for (long long i = 0; i < vector_size; i++) {
+    last_value += arr[i];
+    if (prefixSum[i] != last_value) {
+      err++;
+    }
+  }
+  printf("[%d, %f]\n", err, runtime);
+
+  free(arr);
+  free(prefixSum);
+
+  return 0;
+}
+```

@@ -1,0 +1,347 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra20",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773390848
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250719120000__matrix-multiplication__mistralai_magistral-medium-2506.c",
+    "date": "20250719120000",
+    "taskname": "matrix-multiplication",
+    "llm": "mistralai_magistral-medium-2506",
+    "errors": [],
+    "flags": [
+        "-fopenmp",
+        "-lm"
+    ],
+    "compilation_time": 0.08819937705993652,
+    "executable_path": "/home/thesis/menzel/AutoMP_workbench/out/test_compiled_bac/20250719120000__matrix-multiplication__mistralai_magistral-medium-2506",
+    "args": [
+        "10 2025",
+        "50 2025",
+        "125 2025",
+        "250 2025",
+        "500 2025",
+        "1000 2025"
+    ],
+    "runs": {
+        "10 2025": [
+            {
+                "exit_code": 0,
+                "run_time": 0.001162,
+                "output": "[0, 0.001162]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001699,
+                "output": "[0, 0.001699]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001086,
+                "output": "[0, 0.001086]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001128,
+                "output": "[0, 0.001128]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001116,
+                "output": "[0, 0.001116]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001117,
+                "output": "[0, 0.001117]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.00109,
+                "output": "[0, 0.001090]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001055,
+                "output": "[0, 0.001055]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001089,
+                "output": "[0, 0.001089]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001092,
+                "output": "[0, 0.001092]\n"
+            }
+        ],
+        "50 2025": [
+            {
+                "exit_code": 0,
+                "run_time": 0.001144,
+                "output": "[0, 0.001144]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001101,
+                "output": "[0, 0.001101]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001115,
+                "output": "[0, 0.001115]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001135,
+                "output": "[0, 0.001135]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001111,
+                "output": "[0, 0.001111]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001114,
+                "output": "[0, 0.001114]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.00111,
+                "output": "[0, 0.001110]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001113,
+                "output": "[0, 0.001113]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001123,
+                "output": "[0, 0.001123]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001055,
+                "output": "[0, 0.001055]\n"
+            }
+        ],
+        "125 2025": [
+            {
+                "exit_code": 0,
+                "run_time": 0.001447,
+                "output": "[0, 0.001447]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001439,
+                "output": "[0, 0.001439]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001396,
+                "output": "[0, 0.001396]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001447,
+                "output": "[0, 0.001447]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.002488,
+                "output": "[0, 0.002488]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.00147,
+                "output": "[0, 0.001470]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001399,
+                "output": "[0, 0.001399]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001447,
+                "output": "[0, 0.001447]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001429,
+                "output": "[0, 0.001429]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.001427,
+                "output": "[0, 0.001427]\n"
+            }
+        ],
+        "250 2025": [
+            {
+                "exit_code": 0,
+                "run_time": 0.003874,
+                "output": "[0, 0.003874]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003899,
+                "output": "[0, 0.003899]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003924,
+                "output": "[0, 0.003924]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003858,
+                "output": "[0, 0.003858]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003899,
+                "output": "[0, 0.003899]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003884,
+                "output": "[0, 0.003884]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003921,
+                "output": "[0, 0.003921]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.00392,
+                "output": "[0, 0.003920]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003904,
+                "output": "[0, 0.003904]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.003882,
+                "output": "[0, 0.003882]\n"
+            }
+        ],
+        "500 2025": [
+            {
+                "exit_code": 0,
+                "run_time": 0.023981,
+                "output": "[0, 0.023981]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.024017,
+                "output": "[0, 0.024017]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.02402,
+                "output": "[0, 0.024020]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.024052,
+                "output": "[0, 0.024052]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.024164,
+                "output": "[0, 0.024164]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.023979,
+                "output": "[0, 0.023979]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.023999,
+                "output": "[0, 0.023999]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.024018,
+                "output": "[0, 0.024018]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.023956,
+                "output": "[0, 0.023956]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.02393,
+                "output": "[0, 0.023930]\n"
+            }
+        ],
+        "1000 2025": [
+            {
+                "exit_code": 0,
+                "run_time": 0.189015,
+                "output": "[0, 0.189015]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.187092,
+                "output": "[0, 0.187092]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.187961,
+                "output": "[0, 0.187961]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.186593,
+                "output": "[0, 0.186593]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.187292,
+                "output": "[0, 0.187292]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.187417,
+                "output": "[0, 0.187417]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.231995,
+                "output": "[0, 0.231995]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.219975,
+                "output": "[0, 0.219975]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.224831,
+                "output": "[0, 0.224831]\n"
+            },
+            {
+                "exit_code": 0,
+                "run_time": 0.208075,
+                "output": "[0, 0.208075]\n"
+            }
+        ]
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra23",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773382656
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250722000000__prefix-sum__qwen_qwen3-235b-a22b.c",
+    "date": "20250722000000",
+    "taskname": "prefix-sum",
+    "llm": "qwen_qwen3-235b-a22b",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250722000000__prefix-sum__qwen_qwen3-235b-a22b.c: In function \u2018main\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250722000000__prefix-sum__qwen_qwen3-235b-a22b.c:48:5: error: expected \u2018#pragma omp scan\u2019\n   48 |     prefixSum[i] = sum;\n      |     ^~~~~~~~~\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250722000000__prefix-sum__qwen_qwen3-235b-a22b.c:45:37: error: \u2018sum\u2019 specified in \u2018inscan\u2019 \u2018reduction\u2019 clause but not in \u2018scan\u2019 directive clause\n   45 |   #pragma omp parallel for reduction(inscan, +:sum)\n      |                                     ^\n"
+    ],
+    "flags": [
+        "-lm",
+        "-fopenmp"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "10000 2025",
+        "100000 2025",
+        "1000000 2025",
+        "10000000 2025",
+        "100000000 2025"
+    ],
+    "runs": {}
+}

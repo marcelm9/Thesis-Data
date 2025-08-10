@@ -1,0 +1,33 @@
+{
+    "request_success": true,
+    "request_seconds": 7.271899700164795,
+    "request_error": null,
+    "openrouter": {
+        "id": "gen-1753187923-SgqEpTg8x44OFGqoXPrk",
+        "provider": "Mistral",
+        "model": "mistralai/magistral-medium-2506",
+        "object": "chat.completion",
+        "created": 1753187923,
+        "choices": [
+            {
+                "logprobs": null,
+                "finish_reason": "stop",
+                "native_finish_reason": "stop",
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "[AutoMP_fetch] See corresponding output file",
+                    "refusal": null,
+                    "reasoning": null
+                }
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 1024,
+            "completion_tokens": 979,
+            "total_tokens": 2003
+        }
+    },
+    "parsing_success": true,
+    "parsing_error": null
+}

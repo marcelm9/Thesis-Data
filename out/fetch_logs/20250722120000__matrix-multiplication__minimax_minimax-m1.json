@@ -1,0 +1,8 @@
+{
+    "request_success": false,
+    "request_seconds": 30.014063596725464,
+    "request_error": "HTTPSConnectionPool(host='openrouter.ai', port=443): Read timed out. (read timeout=30)",
+    "openrouter": null,
+    "parsing_success": null,
+    "parsing_error": null
+}

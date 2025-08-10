@@ -1,0 +1,124 @@
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // parse vector size
+  char *endptr;
+  long long vector_size = strtoll(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  long long seed = strtoll(argv[2], NULL, 10);
+  srand((unsigned int)seed);
+
+  // create arrays
+  int *arr = malloc(vector_size * sizeof(int));
+  long long *prefixSum = malloc(vector_size * sizeof(long long));
+  if (!arr || !prefixSum) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the array
+  for (long long i = 0; i < vector_size; i++) {
+    arr[i] = rand() % 100; // random values in [0, 99]
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // compute prefix sum in parallel
+  // This uses a parallel scan (prefix sum) algorithm.
+  // The basic idea is:
+  // 1. Compute partial prefix sums in parallel for chunks.
+  // 2. Compute a prefix sum of these partial sums.
+  // 3. Add the partial sums to the original chunks to get the final prefix sum.
+
+  // Step 1: Compute partial prefix sums and store the last element of each chunk
+  int num_threads = omp_get_max_threads();
+  if (num_threads > vector_size) { // Handle case where vector_size is very small
+      num_threads = vector_size;
+  }
+
+  // Store the last partial sum of each thread's chunk
+  long long *block_sums = malloc(num_threads * sizeof(long long));
+  if (!block_sums) {
+      printf("Memory allocation failed for block_sums\n");
+      return 1;
+  }
+  
+  #pragma omp parallel
+  {
+    int tid = omp_get_thread_num();
+    long long chunk_start = (vector_size / num_threads) * tid;
+    long long chunk_end = (tid == num_threads - 1) ? vector_size : (vector_size / num_threads) * (tid + 1);
+
+    long long current_sum = 0;
+    if (chunk_start < vector_size) { // Ensure chunk_start is within bounds
+        current_sum = arr[chunk_start];
+        prefixSum[chunk_start] = current_sum;
+        for (long long i = chunk_start + 1; i < chunk_end; i++) {
+          current_sum += arr[i];
+          prefixSum[i] = current_sum;
+        }
+    }
+    block_sums[tid] = current_sum; // Store the last sum of this chunk
+  }
+
+  // Step 2: Compute prefix sum of the block_sums (sequentially or in parallel)
+  // We'll do it sequentially here for simplicity and because num_threads is usually small.
+  for (int i = 1; i < num_threads; i++) {
+    block_sums[i] += block_sums[i - 1];
+  }
+
+  // Step 3: Add the accumulated block_sums to subsequent chunks
+  #pragma omp parallel
+  {
+    int tid = omp_get_thread_num();
+    if (tid > 0) { // Only subsequent chunks need adjustment
+      long long offset = block_sums[tid - 1];
+      long long chunk_start = (vector_size / num_threads) * tid;
+      long long chunk_end = (tid == num_threads - 1) ? vector_size : (vector_size / num_threads) * (tid + 1);
+
+      for (long long i = chunk_start; i < chunk_end; i++) {
+        prefixSum[i] += offset;
+      }
+    }
+  }
+  
+  free(block_sums);
+
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  int err = 0;
+  long long last_value = 0;
+  for (long long i = 0; i < vector_size; i++) {
+    last_value += arr[i];
+    if (prefixSum[i] != last_value) {
+      err++;
+    }
+  }
+  printf("[%d, %f]\n", err, runtime);
+
+  free(arr);
+  free(prefixSum);
+
+  return 0;
+}

@@ -1,0 +1,36 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra19",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773390848
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__gaussian-blur__mistralai_magistral-medium-2506.c",
+    "date": "20250720120000",
+    "taskname": "gaussian-blur",
+    "llm": "mistralai_magistral-medium-2506",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__gaussian-blur__mistralai_magistral-medium-2506.c: In function \u2018main\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__gaussian-blur__mistralai_magistral-medium-2506.c:68:48: error: \u2018ki\u2019 undeclared (first use in this function)\n   68 |   #pragma omp parallel for collapse(2) private(ki, kj, sum)\n      |                                                ^~\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__gaussian-blur__mistralai_magistral-medium-2506.c:68:48: note: each undeclared identifier is reported only once for each function it appears in\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__gaussian-blur__mistralai_magistral-medium-2506.c:68:52: error: \u2018kj\u2019 undeclared (first use in this function)\n   68 |   #pragma omp parallel for collapse(2) private(ki, kj, sum)\n      |                                                    ^~\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__gaussian-blur__mistralai_magistral-medium-2506.c:68:56: error: \u2018sum\u2019 undeclared (first use in this function)\n   68 |   #pragma omp parallel for collapse(2) private(ki, kj, sum)\n      |                                                        ^~~\n"
+    ],
+    "flags": [
+        "-fopenmp",
+        "-lm"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "50 2025",
+        "500 2025",
+        "1000 2025",
+        "5000 2025",
+        "10000 2025",
+        "20000 2025"
+    ],
+    "runs": {}
+}

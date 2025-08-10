@@ -1,0 +1,113 @@
+#define COMPILERFLAGS "-fopenmp -lm"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // parse vector size
+  char *endptr;
+  long long vector_size = strtoll(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  long long seed = strtoll(argv[2], NULL, 10);
+  srand((unsigned int)seed);
+
+  // create arrays
+  int *arr = malloc(vector_size * sizeof(int));
+  long long *prefixSum = malloc(vector_size * sizeof(long long));
+  if (!arr || !prefixSum) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the array
+  for (long long i = 0; i < vector_size; i++) {
+    arr[i] = rand() % 100; // random values in [0, 99]
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // Parallel prefix sum (Blelloch scan, two-pass)
+  int num_threads = omp_get_max_threads();
+  long long *sums = malloc(num_threads * sizeof(long long));
+  if (!sums) {
+    printf("Memory allocation failed\n");
+    free(arr);
+    free(prefixSum);
+    return 1;
+  }
+
+  // 1. Compute local prefix sums in parallel
+  #pragma omp parallel
+  {
+    int tid = omp_get_thread_num();
+    int nthreads = omp_get_num_threads();
+    long long chunk = (vector_size + nthreads - 1) / nthreads;
+    long long begin = tid * chunk;
+    long long endi = (begin + chunk < vector_size) ? (begin + chunk) : vector_size;
+    long long acc = 0;
+    for (long long i = begin; i < endi; i++) {
+      acc += arr[i];
+      prefixSum[i] = acc;
+    }
+    if (endi > 0 && endi - 1 >= begin)
+      sums[tid] = prefixSum[endi - 1];
+    else
+      sums[tid] = 0;
+  }
+
+  // 2. Compute offsets (prefix sum of last elements)
+  for (int i = 1; i < num_threads; i++) {
+    sums[i] += sums[i - 1];
+  }
+
+  // 3. Add offsets in parallel
+  #pragma omp parallel
+  {
+    int tid = omp_get_thread_num();
+    int nthreads = omp_get_num_threads();
+    long long chunk = (vector_size + nthreads - 1) / nthreads;
+    long long begin = tid * chunk;
+    long long endi = (begin + chunk < vector_size) ? (begin + chunk) : vector_size;
+    if (tid > 0) {
+      long long offset = sums[tid - 1];
+      for (long long i = begin; i < endi; i++) {
+        prefixSum[i] += offset;
+      }
+    }
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  int err = 0;
+  long long last_value = 0;
+  for (long long i = 0; i < vector_size; i++) {
+    last_value += arr[i];
+    if (prefixSum[i] != last_value) {
+      err++;
+    }
+  }
+  printf("[%d, %f]\n", err, runtime);
+
+  free(arr);
+  free(prefixSum);
+  free(sums);
+
+  return 0;
+}

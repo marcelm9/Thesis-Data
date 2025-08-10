@@ -1,0 +1,36 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra34",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773382656
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C",
+    "date": "20250716120000",
+    "taskname": "heat-diffusion",
+    "llm": "google_gemini-2.5-flash.C",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C: In function \u2018int main(int, char**)\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C:31:25: error: invalid conversion from \u2018void*\u2019 to \u2018double**\u2019 [-fpermissive]\n   31 |   double **grid = malloc(N * sizeof(double *));\n      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~\n      |                         |\n      |                         void*\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C:32:29: error: invalid conversion from \u2018void*\u2019 to \u2018double**\u2019 [-fpermissive]\n   32 |   double **new_grid = malloc(N * sizeof(double *));\n      |                       ~~~~~~^~~~~~~~~~~~~~~~~~~~~~\n      |                             |\n      |                             void*\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C:33:29: error: invalid conversion from \u2018void*\u2019 to \u2018double**\u2019 [-fpermissive]\n   33 |   double **ref_grid = malloc(N * sizeof(double *));\n      |                       ~~~~~~^~~~~~~~~~~~~~~~~~~~~~\n      |                             |\n      |                             void*\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C:41:21: error: invalid conversion from \u2018void*\u2019 to \u2018double*\u2019 [-fpermissive]\n   41 |     grid[i] = calloc(N, sizeof(double));\n      |               ~~~~~~^~~~~~~~~~~~~~~~~~~\n      |                     |\n      |                     void*\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C:42:25: error: invalid conversion from \u2018void*\u2019 to \u2018double*\u2019 [-fpermissive]\n   42 |     new_grid[i] = calloc(N, sizeof(double));\n      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~\n      |                         |\n      |                         void*\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250716120000__heat-diffusion__google_gemini-2.5-flash.C:43:25: error: invalid conversion from \u2018void*\u2019 to \u2018double*\u2019 [-fpermissive]\n   43 |     ref_grid[i] = calloc(N, sizeof(double));\n      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~\n      |                         |\n      |                         void*\n"
+    ],
+    "flags": [
+        "-lm",
+        "-fopenmp"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "50 100",
+        "250 100",
+        "500 100",
+        "1000 100",
+        "2500 100",
+        "5000 100"
+    ],
+    "runs": {}
+}

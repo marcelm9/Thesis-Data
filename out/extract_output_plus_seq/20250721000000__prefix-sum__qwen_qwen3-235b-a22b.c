@@ -1,0 +1,117 @@
+#define COMPILERFLAGS "-fopenmp -lm"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // parse vector size
+  char *endptr;
+  long long vector_size = strtoll(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0 || vector_size < 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  long long seed = strtoll(argv[2], NULL, 10);
+  srand((unsigned int)seed);
+
+  // create arrays
+  int *arr = malloc(vector_size * sizeof(int));
+  long long *prefixSum = malloc(vector_size * sizeof(long long));
+  if (!arr || !prefixSum) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the array
+  for (long long i = 0; i < vector_size; i++) {
+    arr[i] = rand() % 100; // random values in [0, 99]
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // compute prefix sum using OpenMP
+  int nthreads;
+  #pragma omp parallel
+  {
+    #pragma omp single
+    nthreads = omp_get_num_threads();
+  }
+
+  long long chunk_size = (vector_size + nthreads - 1) / nthreads;
+
+  // Step 1: compute block_sums
+  long long block_sums[nthreads];
+  #pragma omp parallel for schedule(static)
+  for (long long i = 0; i < nthreads; i++) {
+    long long start_idx = i * chunk_size;
+    long long end_idx = (i + 1) * chunk_size;
+    if (end_idx > vector_size) end_idx = vector_size;
+    if (start_idx >= vector_size) {
+      block_sums[i] = 0;
+      continue;
+    }
+    long long s = 0;
+    for (long long j = start_idx; j < end_idx; j++) {
+      s += arr[j];
+    }
+    block_sums[i] = s;
+  }
+
+  // Step 2: compute prefix_block_sums
+  long long prefix_block_sums[nthreads];
+  prefix_block_sums[0] = 0;
+  for (long long i = 1; i < nthreads; i++) {
+    prefix_block_sums[i] = prefix_block_sums[i - 1] + block_sums[i - 1];
+  }
+
+  // Step 3: compute local prefix sums with offset
+  #pragma omp parallel
+  {
+    int tid = omp_get_thread_num();
+    long long start_idx = tid * chunk_size;
+    if (start_idx >= vector_size) {
+      return;
+    }
+    long long end_idx = (tid + 1) * chunk_size;
+    if (end_idx > vector_size) {
+      end_idx = vector_size;
+    }
+    long long offset = prefix_block_sums[tid];
+    long long current_sum = 0;
+    for (long long j = start_idx; j < end_idx; j++) {
+      current_sum += arr[j];
+      prefixSum[j] = offset + current_sum;
+    }
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  int err = 0;
+  long long last_value = 0;
+  for (long long i = 0; i < vector_size; i++) {
+    last_value += arr[i];
+    if (prefixSum[i] != last_value) {
+      err++;
+    }
+  }
+  printf("[%d, %f]\n", err, runtime);
+
+  free(arr);
+  free(prefixSum);
+
+  return 0;
+}

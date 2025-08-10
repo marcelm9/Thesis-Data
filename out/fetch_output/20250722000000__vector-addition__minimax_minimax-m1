@@ -1,0 +1,284 @@
+ vector_size is within the range of int.
+
+So, the answer is to add the three pragmas.
+
+But perhaps the setup loop is not part of the main computation and the problem only requires the vector addition loop to be parallelized.
+
+But the problem statement's instruction is to parallelize the program. So, the answer should include all possible loops.
+
+But I'm not sure. Given the time, perhaps the answer should focus on the vector addition loop.
+
+So, the answer would be:
+
+Add #include <omp.h>
+
+Change COMPILERFLAGS to "-lm -fopenmp"
+
+Add #pragma omp parallel for to the vector addition loop.
+
+So, the code would have:
+
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <omp.h>
+
+...
+
+// add two vectors
+#pragma omp parallel for
+for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+}
+
+That's the main change.
+
+But the setup loop and error checking loop are not parallelized.
+
+But the problem statement says to parallelize the program. So, perhaps the answer should include all possible loops.
+
+But given that the setup loop is before the timing, and the error checking is after, the runtime is only affected by the vector addition loop.
+
+So, perhaps the answer should only parallelize the vector addition loop.
+
+But I'm not sure. The problem statement's instruction is a bit ambiguous.
+
+But the example code's main part is the vector addition. So, the answer would be to parallelize that loop.
+
+So, the code would have:
+
+#include <omp.h>
+
+#define COMPILERFLAGS "-lm -fopenmp"
+
+...
+
+// add two vectors
+#pragma omp parallel for
+for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+}
+
+That's the only change.
+
+But the problem statement's example code may have that as the only loop that is computationally intensive.
+
+So, the answer would be to add the pragma to the vector addition loop.
+
+So, the code would look like:
+
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+... rest of includes ...
+
+// add two vectors
+#pragma omp parallel for
+for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+}
+
+That's the main change.
+
+So, the answer is to modify the code as follows:
+
+Add #include <omp.h>
+
+Change COMPILERFLAGS to include -fopenmp.
+
+Add the pragma to the vector addition loop.
+
+So, the final code would have:
+
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <omp.h>
+
+...
+
+// add two vectors
+#pragma omp parallel for
+for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+}
+
+So, the code would be:
+
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+#define TOL 0.0000001
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // set seed for random number generation
+  srand((unsigned int)strtol(argv[2], NULL, 10));
+
+  // generate a random number
+  int random_number_1 = rand() % 1000;
+  int random_number_2 = rand() % 1000;
+
+  char *endptr;
+  long vector_size = strtol(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  // create arrays
+  double *a = malloc(vector_size * sizeof(double));
+  double *b = malloc(vector_size * sizeof(double));
+  double *c = malloc(vector_size * sizeof(double));
+  double *res = malloc(vector_size * sizeof(double));
+  int err = 0;
+
+  if (!a || !b || !c || !res) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the arrays
+  for (int i = 0; i < vector_size; i++) {
+    a[i] = (double)i * random_number_1;
+    b[i] = (double)i * random_number_2;
+    c[i] = 0.0;
+    res[i] = a[i] + b[i];
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // add two vectors
+  #pragma omp parallel for
+  for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  for (int i = 0; i < vector_size; i++) {
+    double val = abs(c[i] - res[i]);
+    if (val > TOL)
+      err++;
+  }
+
+  // print results
+  printf("[%d, %f]\n", err, runtime);
+
+  free(a);
+  free(b);
+  free(c);
+  free(res);
+
+  return 0;
+}
+
+So, the changes are:
+
+- Added #include <omp.h>
+
+- Changed COMPILERFLAGS to "-lm -fopenmp"
+
+- Added #pragma omp parallel for before the vector addition loop.
+
+Yes, that's the main change.
+
+The other loops are not parallelized, but the problem statement may only require```c
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+#define TOL 0.0000001
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // set seed for random number generation
+  srand((unsigned int)strtol(argv[2], NULL, 10));
+
+  // generate a random number
+  int random_number_1 = rand() % 1000;
+  int random_number_2 = rand() % 1000;
+
+  char *endptr;
+  long vector_size = strtol(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  // create arrays
+  double *a = malloc(vector_size * sizeof(double));
+  double *b = malloc(vector_size * sizeof(double));
+  double *c = malloc(vector_size * sizeof(double));
+  double *res = malloc(vector_size * sizeof(double));
+  int err = 0;
+
+  if (!a || !b || !c || !res) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the arrays
+  for (int i = 0; i < vector_size; i++) {
+    a[i] = (double)i * random_number_1;
+    b[i] = (double)i * random_number_2;
+    c[i] = 0.0;
+    res[i] = a[i] + b[i];
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // add two vectors
+  #pragma omp parallel for
+  for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  for (int i = 0; i < vector_size; i++) {
+    double val = abs(c[i] - res[i]);
+    if (val > TOL)
+      err++;
+  }
+
+  // print results
+  printf("[%d, %f]\n", err, runtime);
+
+  free(a);
+  free(b);
+  free(c);
+  free(res);
+
+  return 0;
+}
+```

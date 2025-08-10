@@ -1,0 +1,36 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra22",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773386752
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720000000__heat-diffusion__mistralai_magistral-medium-2506.c",
+    "date": "20250720000000",
+    "taskname": "heat-diffusion",
+    "llm": "mistralai_magistral-medium-2506",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720000000__heat-diffusion__mistralai_magistral-medium-2506.c: In function \u2018main\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720000000__heat-diffusion__mistralai_magistral-medium-2506.c:79:30: error: expected \u2018#pragma omp\u2019 clause before \u2018collapsed\u2019\n   79 |     #pragma omp parallel for collapsed(2)\n      |                              ^~~~~~~~~\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720000000__heat-diffusion__mistralai_magistral-medium-2506.c:87:30: error: expected \u2018#pragma omp\u2019 clause before \u2018collapsed\u2019\n   87 |     #pragma omp parallel for collapsed(2)\n      |                              ^~~~~~~~~\n"
+    ],
+    "flags": [
+        "-lm",
+        "-fopenmp"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "50 100",
+        "250 100",
+        "500 100",
+        "1000 100",
+        "2500 100",
+        "5000 100"
+    ],
+    "runs": {}
+}

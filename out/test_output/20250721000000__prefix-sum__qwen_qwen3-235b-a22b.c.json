@@ -1,0 +1,35 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra31",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773386752
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721000000__prefix-sum__qwen_qwen3-235b-a22b.c",
+    "date": "20250721000000",
+    "taskname": "prefix-sum",
+    "llm": "qwen_qwen3-235b-a22b",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721000000__prefix-sum__qwen_qwen3-235b-a22b.c: In function \u2018main\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721000000__prefix-sum__qwen_qwen3-235b-a22b.c:83:7: warning: \u2018return\u2019 with no value, in function returning non-void\n   83 |       return;\n      |       ^~~~~~\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721000000__prefix-sum__qwen_qwen3-235b-a22b.c:8:5: note: declared here\n    8 | int main(int argc, char *argv[]) {\n      |     ^~~~\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250721000000__prefix-sum__qwen_qwen3-235b-a22b.c:83:7: error: invalid branch to/from OpenMP structured block\n   83 |       return;\n      |       ^~~~~~\n"
+    ],
+    "flags": [
+        "-fopenmp",
+        "-lm"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "10000 2025",
+        "100000 2025",
+        "1000000 2025",
+        "10000000 2025",
+        "100000000 2025"
+    ],
+    "runs": {}
+}

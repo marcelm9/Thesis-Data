@@ -1,0 +1,156 @@
+```c
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <omp.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // parse vector size
+  char *endptr;
+  long long vector_size = strtoll(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  long long seed = strtoll(argv[2], NULL, 10);
+  srand((unsigned int)seed);
+
+  // create arrays
+  int *arr = malloc(vector_size * sizeof(int));
+  long long *prefixSum = malloc(vector_size * sizeof(long long));
+  if (!arr || !prefixSum) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the array
+  for (long long i = 0; i < vector_size; i++) {
+    arr[i] = rand() % 100; // random values in [0, 99]
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // compute prefix sum (parallelized with OpenMP scan)
+  // This is a common pattern for parallel prefix sum where each thread computes a partial sum
+  // and then these partial sums are combined.
+  // For large vector_size, a more complex parallel scan (e.g., Blelloch scan) might be faster,
+  // but for moderate sizes, this simple approach can be effective for filling the array.
+  // The official OpenMP 5.0 standard includes `omp scan` but it's not widely implemented yet.
+  // We'll implement a basic parallelizable approach here.
+
+  // Basic parallel prefix sum in OpenMP
+  // This approach is generally for the initial filling and not a true parallel prefix scan algorithm
+  // as it requires sequential updates. A true parallel scan is more complex.
+  // For OpenMP, the simplest way to parallelize this is often using a parallel loop for initial data,
+  // and then a potentially sequential or optimized parallel scan for the prefix sum itself.
+  // Since the problem asks to parallelize, and for prefix sum, a direct parallel for loop
+  // for the dependent sum is not straightforward (it's a scan operation),
+  // we'll use a sequential first step and then the loop for filling,
+  // or if we must parallelize the sum, it would become more complex.
+
+  // A direct `for` loop with `sum[i] = sum[i-1] + arr[i]` is inherently sequential.
+  // To parallelize a prefix sum, you generally need a more sophisticated algorithm
+  // like a work-efficient parallel scan (e.g., Blelloch scan).
+  // OpenMP 5.0 introduced `omp scan` which can do this, but it's often not supported.
+  // Without `omp scan`, a common trick for a "parallelizable" prefix sum in OpenMP
+  // involves two phases:
+  // 1. Each thread computes a partial prefix sum for its chunk.
+  // 2. These partial sums are combined to update the subsequent chunks.
+
+  int num_threads = omp_get_max_threads();
+  if (vector_size == 0) { // Handle empty vector case
+    // Do nothing for empty vector
+  } else if (vector_size == 1) { // Handle single element case
+    prefixSum[0] = arr[0];
+  } else {
+    // If OpenMP 5.0 and `omp scan` were available, it would be:
+    // #pragma omp parallel for reduction(inscan, +:current_sum)
+    // for (long long i = 0; i < vector_size; ++i) {
+    //   current_sum += arr[i];
+    //   #pragma omp scan exclusive(current_sum)
+    //   // prefixSum[i] = current_sum; // or similar depending on inclusive/exclusive
+    //   if (i == 0) prefixSum[i] = arr[i]; // Correct for first element due to exclusive scan
+    //   else prefixSum[i] = current_sum + arr[i]; // Adjust for exclusive scan behavior
+
+    // If we're using older OpenMP (common case):
+    // This is a common, simple parallel prefix sum.
+    // It's a two-pass algorithm. The first pass computes partial sums in parallel.
+    // The second pass updates elements based on previous block sums.
+    long long *block_sums = (long long *)calloc(num_threads, sizeof(long long)); // Stores sum of each thread's block
+
+    #pragma omp parallel
+    {
+      int tid = omp_get_thread_num();
+      long long thread_sum = 0;
+      long long start_idx = tid * (vector_size / num_threads);
+      long long end_idx = (tid == num_threads - 1) ? vector_size : (tid + 1) * (vector_size / num_threads);
+
+      // Phase 1: Each thread computes its local prefix sum
+      if (start_idx < end_idx) { // Ensure there's data in the chunk
+        prefixSum[start_idx] = arr[start_idx];
+        thread_sum = arr[start_idx];
+        for (long long i = start_idx + 1; i < end_idx; ++i) {
+          prefixSum[i] = prefixSum[i - 1] + arr[i];
+          thread_sum += arr[i];
+        }
+      }
+      block_sums[tid] = thread_sum;
+
+      // Ensure all threads have completed their partial sum calculations
+      #pragma omp barrier
+
+      // Phase 2: Accumulate block sums sequentially to correct prefix sums
+      // Only one thread needs to compute the global offsets
+      #pragma omp master
+      {
+        long long current_offset = 0;
+        for (int i = 0; i < num_threads; ++i) {
+          int iter_start_idx = i * (vector_size / num_threads);
+          if (i > 0) { // First block doesn't need an offset
+            // Add the sum of previous blocks to the start of this block's prefix sum
+            current_offset += block_sums[i - 1];
+            // Update the prefix sums for this block
+            long long iter_end_idx = (i == num_threads - 1) ? vector_size : (i + 1) * (vector_size / num_threads);
+            for (long long j = iter_start_idx; j < iter_end_idx; ++j) {
+              prefixSum[j] += current_offset;
+            }
+          }
+        }
+      }
+    }
+    free(block_sums);
+  }
+
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  int err = 0;
+  long long last_value = 0;
+  for (long long i = 0; i < vector_size; i++) {
+    last_value += arr[i];
+    if (prefixSum[i] != last_value) {
+      err++;
+    }
+  }
+  printf("[%d, %f]\n", err, runtime);
+
+  free(arr);
+  free(prefixSum);
+
+  return 0;
+}
+```

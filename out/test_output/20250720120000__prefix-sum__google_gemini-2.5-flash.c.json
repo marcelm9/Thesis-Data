@@ -1,0 +1,35 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra31",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773386752
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__prefix-sum__google_gemini-2.5-flash.c",
+    "date": "20250720120000",
+    "taskname": "prefix-sum",
+    "llm": "google_gemini-2.5-flash",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__prefix-sum__google_gemini-2.5-flash.c: In function \u2018main\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250720120000__prefix-sum__google_gemini-2.5-flash.c:111:40: error: \u2018struct timespec\u2019 has no member named \u2018tv_tv_sec\u2019; did you mean \u2018tv_sec\u2019?\n  111 |   double runtime = (end.tv_sec - start.tv_tv_sec) +\n      |                                        ^~~~~~~~~\n      |                                        tv_sec\n"
+    ],
+    "flags": [
+        "-lm",
+        "-fopenmp"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "10000 2025",
+        "100000 2025",
+        "1000000 2025",
+        "10000000 2025",
+        "100000000 2025"
+    ],
+    "runs": {}
+}

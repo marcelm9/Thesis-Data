@@ -1,0 +1,84 @@
+#define COMPILERFLAGS "-lm -fopenmp"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+#include <omp.h>
+
+#define TOL 0.0000001
+
+int main(int argc, char *argv[]) {
+  if (argc != 3) {
+    printf("Usage: %s <vector_size> <seed>\n", argv[0]);
+    return 1;
+  }
+
+  // set seed for random number generation
+  srand((unsigned int)strtol(argv[2], NULL, 10));
+
+  // generate a random number
+  int random_number_1 = rand() % 1000;
+  int random_number_2 = rand() % 1000;
+
+  char *endptr;
+  long vector_size = strtol(argv[1], &endptr, 10);
+  if (*endptr != '\0' || vector_size <= 0) {
+    printf("Invalid vector size\n");
+    return 1;
+  }
+
+  // create arrays
+  double *a = malloc(vector_size * sizeof(double));
+  double *b = malloc(vector_size * sizeof(double));
+  double *c = malloc(vector_size * sizeof(double));
+  double *res = malloc(vector_size * sizeof(double));
+  int err = 0;
+
+  if (!a || !b || !c || !res) {
+    printf("Memory allocation failed\n");
+    return 1;
+  }
+
+  // fill the arrays
+  #pragma omp parallel for
+  for (int i = 0; i < vector_size; i++) {
+    a[i] = (double)i * random_number_1;
+    b[i] = (double)i * random_number_2;
+    c[i] = 0.0;
+    res[i] = a[i] + b[i];
+  }
+
+  // start measuring
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // add two vectors
+  #pragma omp parallel for
+  for (int i = 0; i < vector_size; i++) {
+    c[i] = a[i] + b[i];
+  }
+
+  // end measuring
+  clock_gettime(CLOCK_MONOTONIC, &end);
+  double runtime = (end.tv_sec - start.tv_sec) +
+                   (end.tv_nsec - start.tv_nsec) / 1000000000.0;
+
+  // test results
+  #pragma omp parallel for reduction(+:err)
+  for (int i = 0; i < vector_size; i++) {
+    double val = fabs(c[i] - res[i]);
+    if (val > TOL)
+      err++;
+  }
+
+  // print results
+  printf("[%d, %f]\n", err, runtime);
+
+  free(a);
+  free(b);
+  free(c);
+  free(res);
+
+  return 0;
+}

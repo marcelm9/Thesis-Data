@@ -1,0 +1,35 @@
+{
+    "system": {
+        "system": "Linux",
+        "node_name": "hydra15",
+        "release": "5.10.0-18-amd64",
+        "version": "#1 SMP Debian 5.10.140-1 (2022-09-02)",
+        "machine": "x86_64",
+        "processor": "",
+        "python_version": "3.9.2",
+        "python_build": "default Feb 28 2021 17:03:44",
+        "cpu_count": 32,
+        "total_memory_bytes": 99773382656
+    },
+    "path": "/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250718000000__prefix-sum__qwen_qwen3-235b-a22b.c",
+    "date": "20250718000000",
+    "taskname": "prefix-sum",
+    "llm": "qwen_qwen3-235b-a22b",
+    "errors": [
+        "Compilation error: /home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250718000000__prefix-sum__qwen_qwen3-235b-a22b.c: In function \u2018main\u2019:\n/home/thesis/menzel/AutoMP_workbench/out/extract_output_bac_plus_seq/20250718000000__prefix-sum__qwen_qwen3-235b-a22b.c:45:42: error: expected \u2018:\u2019 before \u2018,\u2019 token\n   45 |   #pragma omp parallel for reduction(scan, +:sum)\n      |                                          ^\n      |                                          :\n"
+    ],
+    "flags": [
+        "-fopenmp",
+        "-lm"
+    ],
+    "compilation_time": null,
+    "executable_path": null,
+    "args": [
+        "10000 2025",
+        "100000 2025",
+        "1000000 2025",
+        "10000000 2025",
+        "100000000 2025"
+    ],
+    "runs": {}
+}

@@ -1,0 +1,41 @@
+compiler-command: gcc
+output-directory: ../../out/test_output
+compilation-directory: ../../out/test_compiled
+compiler-flags-macro: COMPILERFLAGS
+repeat: 10
+args:
+  vector-addition:
+    - "100 2025"
+    - "1000 2025"
+    - "10000 2025"
+    - "100000 2025"
+    - "1000000 2025"
+    - "10000000 2025"
+    - "100000000 2025"
+  prefix-sum:
+    - "10000 2025"
+    - "100000 2025"
+    - "1000000 2025"
+    - "10000000 2025"
+    - "100000000 2025"
+  matrix-multiplication:
+    - "10 2025"
+    - "50 2025"
+    - "125 2025"
+    - "250 2025"
+    - "500 2025"
+    - "1000 2025"
+  heat-diffusion:
+    - "50 100"
+    - "250 100"
+    - "500 100"
+    - "1000 100"
+    - "2500 100"
+    - "5000 100"
+  gaussian-blur:
+    - "50 2025"
+    - "500 2025"
+    - "1000 2025"
+    - "5000 2025"
+    - "10000 2025"
+    - "20000 2025"
